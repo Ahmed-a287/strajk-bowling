@@ -1,26 +1,7 @@
-/* WORKING ONE BUT NOT FULL
-
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import App from '../App';
-import '../setupTests'; // Ensure this file sets up the MSW server
-
-import { beforeEach, describe, expect, it } from 'vitest';
-import BookingInfo from '../components/BookingInfo/BookingInfo';
-
-it('should allow user to navigate back to booking view after confirmation', async () => {
-  // Step 1: Complete a booking and receive confirmation
-  render(<BookingInfo />); // Or whatever the component is
-  screen.debug(); // This will log the current DOM
-  fireEvent.change(screen.getByLabelText(/Date/i), {
-    target: { value: '2024-06-01' },
-  });
-});
-*/
-
-import Booking from '../views/Booking';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
+import '../setupTests';
+import Booking from '../views/Booking';
+import { vi, describe, expect, it } from 'vitest';
 import '@testing-library/jest-dom';
 import BookingInfo from '../components/BookingInfo/BookingInfo';
 import { MemoryRouter } from 'react-router-dom';
@@ -132,17 +113,14 @@ describe('Booking Tests', () => {
     );
     const numberOfLanesInput = screen.getByLabelText(/number of lanes/i);
 
-    // Fyll i bokningsdetaljer
     fireEvent.change(dateInput, { target: { value: '2023-12-31' } });
     fireEvent.change(timeInput, { target: { value: '18:00' } });
     fireEvent.change(numberOfBowlersInput, { target: { value: '3' } });
     fireEvent.change(numberOfLanesInput, { target: { value: '2' } });
 
-    // Simulera formulärinlämning
     const submitButton = screen.getByRole('button', { name: /strIIIIIike!/i });
     fireEvent.click(submitButton);
 
-    // Kontrollera att formuläret kan skickas om valideringen passerar
     expect(screen.getByText(/confirmation/i)).toBeInTheDocument();
   });
 
@@ -163,16 +141,12 @@ describe('Booking Tests', () => {
     });
     fireEvent.change(screen.getByLabelText(/Number of awesome bowlers/i), {
       target: { value: 9 },
-    }); // Överskrider maxantal spelare
+    });
     fireEvent.change(screen.getByLabelText(/Number of lanes/i), {
       target: { value: 2 },
     });
 
-    // Klicka på submit-knappen
     fireEvent.click(screen.getByText(/strIIIIIike!/i));
-
-    // Kontrollera om felmeddelandet visas
-    screen.debug(); // Kontrollera nuvarande tillstånd i DOM
     const errorMessage = document.querySelector('.error-message__text');
     expect(errorMessage).toBeInTheDocument();
   });
