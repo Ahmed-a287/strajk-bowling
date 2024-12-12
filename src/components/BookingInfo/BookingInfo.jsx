@@ -1,6 +1,6 @@
-import "./BookingInfo.scss";
+import './BookingInfo.scss';
 
-import Input from "../Input/Input";
+import Input from '../Input/Input';
 
 function BookingInfo({ updateBookingDetails }) {
   return (

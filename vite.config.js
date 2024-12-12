@@ -6,9 +6,15 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    setupFiles: './src/setupTests',
     reporters: ['default', 'verbose'],
     transformMode: {
       web: [/\.jsx?$/], // transform JS/JSX  Ta bort?
+      coverage: {
+        provider: 'v8', // Använd V8:s inbyggda coverage-verktyg
+        reporter: ['text', 'lcov'], // Text- och lcov-format
+        statements: 60, // Minsta procentandel för täckning
+      },
     },
   },
 });

@@ -1,13 +1,20 @@
-import { rest } from 'msw';
+import { HttpResponse, http } from 'msw';
 
 export const handlers = [
-  // Mockar ett POST-anrop
-  rest.post(
+  http.post(
     'https://h5jbtjv6if.execute-api.eu-north-1.amazonaws.com',
-    (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({ message: 'Mocked POST request received' })
+    async (request) => {
+      return HttpResponse.json(
+        {
+          active: true,
+          when: '2024-12-30T12:00',
+          lanes: '1',
+          people: '1',
+          shoes: ['39'],
+          id: '1122',
+          price: 120,
+        },
+        { status: 201 }
       );
     }
   ),

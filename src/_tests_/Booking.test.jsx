@@ -1,3 +1,23 @@
+/* WORKING ONE BUT NOT FULL
+
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import App from '../App';
+import '../setupTests'; // Ensure this file sets up the MSW server
+
+import { beforeEach, describe, expect, it } from 'vitest';
+import BookingInfo from '../components/BookingInfo/BookingInfo';
+
+it('should allow user to navigate back to booking view after confirmation', async () => {
+  // Step 1: Complete a booking and receive confirmation
+  render(<BookingInfo />); // Or whatever the component is
+  screen.debug(); // This will log the current DOM
+  fireEvent.change(screen.getByLabelText(/Date/i), {
+    target: { value: '2024-06-01' },
+  });
+});
+*/
+
 import Booking from '../views/Booking';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
