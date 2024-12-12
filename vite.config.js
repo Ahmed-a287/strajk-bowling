@@ -13,7 +13,7 @@ export default defineConfig({
       coverage: {
         provider: 'v8', // Använd V8:s inbyggda coverage-verktyg
         reporter: ['text', 'lcov'], // Text- och lcov-format
-        statements: 60, // Minsta procentandel för täckning
+        statements: 80, // Minsta procentandel för täckning
       },
     },
   },
