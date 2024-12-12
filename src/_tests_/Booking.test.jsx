@@ -4,6 +4,9 @@ import '@testing-library/jest-dom';
 import Booking from '../views/Booking';
 import BookingInfo from '../components/BookingInfo/BookingInfo';
 import { MemoryRouter } from 'react-router-dom';
+import Input from '../components/Input/Input';
+import Shoes from '../components/Shoes/Shoes';
+import Confirmation from '../views/Confirmation';
 
 describe('Booking Tests', () => {
   // 1- Återger alla nödvändiga inmatningsfält med korrekta labels
@@ -121,9 +124,15 @@ describe('Booking Tests', () => {
 
     expect(screen.getByText(/confirmation/i)).toBeInTheDocument();
   });
-
+  it('should render a conformition when all the booking input is filled', async () => {
+    render(
+      <MemoryRouter>
+        <Booking />
+      </MemoryRouter>
+    );
+  });
   // 6- Användare får inte skicka in om alla fält inte är ifyllda eller om spelarna överskrider maxkapaciteten per bana
-  test('should not allow submission if all fields are not filled or if players exceed max capacity per lane', () => {
+  it('should not allow submission if all fields are not filled or if players exceed max capacity per lane', () => {
     render(
       <MemoryRouter>
         <Booking />
@@ -146,5 +155,58 @@ describe('Booking Tests', () => {
     fireEvent.click(screen.getByText(/strIIIIIike!/i));
     const errorMessage = document.querySelector('.error-message__text');
     expect(errorMessage).toBeInTheDocument();
+  });
+
+  // Visar ett felmeddelande när en eller flera fält ej fyllda
+  it('displays error message when booking cannot be completed', async () => {
+    render(
+      <MemoryRouter>
+        <Booking />
+      </MemoryRouter>
+    );
+
+    const completeBookingButton = screen.getByRole('button', {
+      name: /strIIIIIike!/i,
+    });
+
+    fireEvent.click(completeBookingButton);
+
+    const errorMessage = await screen.findByText(
+      /alla fälten måste vara ifyllda/i
+    );
+    expect(errorMessage).toBeInTheDocument();
+  });
+  //
+  //Testar om användare kan lägga flera skor med storlek
+  it('allows user to input shoe sizes for multiple players', () => {
+    const mockUpdateSize = vi.fn(); // Skapa en mock-funktion för att spåra anrop
+    const mockShoes = [
+      { id: '1', size: '' },
+      { id: '2', size: '' },
+    ];
+
+    render(
+      <Shoes
+        updateSize={mockUpdateSize}
+        addShoe={() => {}}
+        removeShoe={() => {}}
+        shoes={mockShoes}
+      />
+    );
+
+    const inputs = screen.getAllByLabelText(/Shoe size \/ person/i);
+
+    fireEvent.change(inputs[0], { target: { value: '42' } });
+    fireEvent.change(inputs[1], { target: { value: '38' } });
+
+    expect(mockUpdateSize).toHaveBeenCalledTimes(2);
+
+    const firstCallEvent = mockUpdateSize.mock.calls[0][0];
+    expect(firstCallEvent.target.name).toBe('1');
+    expect(firstCallEvent.target.value).toBe('42');
+
+    const secondCallEvent = mockUpdateSize.mock.calls[1][0];
+    expect(secondCallEvent.target.name).toBe('2');
+    expect(secondCallEvent.target.value).toBe('38');
   });
 });
