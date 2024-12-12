@@ -1,12 +1,12 @@
 import Booking from '../views/Booking';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
-
 import BookingInfo from '../components/BookingInfo/BookingInfo';
+import { MemoryRouter } from 'react-router-dom';
 
-describe('BookingInfo Component Tests', () => {
+describe('Booking Tests', () => {
+  // 1- Återger alla nödvändiga inmatningsfält med korrekta labels
   it('renders all necessary input fields with correct labels', () => {
     render(<BookingInfo updateBookingDetails={() => {}} />);
 
@@ -22,6 +22,7 @@ describe('BookingInfo Component Tests', () => {
     });
   });
 
+  // 2- Kör updateBookingDetails med korrekta värden
   it('triggers updateBookingDetails with proper values on change', () => {
     const updateMock = vi.fn();
     render(<BookingInfo updateBookingDetails={updateMock} />);
@@ -52,6 +53,7 @@ describe('BookingInfo Component Tests', () => {
     });
   });
 
+  // 3- Kontrollerar att standardvärdena för inmatningsfälten är korrekt inställda
   it('uses default values correctly in input fields', () => {
     render(<BookingInfo updateBookingDetails={() => {}} />);
 
@@ -63,6 +65,7 @@ describe('BookingInfo Component Tests', () => {
     expect(screen.getByLabelText(/number of lanes/i)).toHaveValue(null);
   });
 
+  //4- Kontrollerar att updateBookingDetails anropas med rätt struktur efter ändringar i inmatningsfält.
   it('ensures updateBookingDetails is called with the expected structure', () => {
     const mockCallback = vi.fn();
     render(<BookingInfo updateBookingDetails={mockCallback} />);
@@ -92,139 +95,65 @@ describe('BookingInfo Component Tests', () => {
       );
     });
   });
+
+  // 5- Testar att användaren kan boka ett datum och en tid och skicka en reservation med korrekt validering
+  it('should allow user to book a date and time and submit reservation with proper validation', async () => {
+    render(
+      //Då useNavigate behöver en Router
+      <MemoryRouter>
+        <Booking />
+      </MemoryRouter>
+    );
+
+    const dateInput = screen.getByLabelText(/date/i);
+    const timeInput = screen.getByLabelText(/time/i);
+    const numberOfBowlersInput = screen.getByLabelText(
+      /number of awesome bowlers/i
+    );
+    const numberOfLanesInput = screen.getByLabelText(/number of lanes/i);
+
+    // Fyll i bokningsdetaljer
+    fireEvent.change(dateInput, { target: { value: '2023-12-31' } });
+    fireEvent.change(timeInput, { target: { value: '18:00' } });
+    fireEvent.change(numberOfBowlersInput, { target: { value: '3' } });
+    fireEvent.change(numberOfLanesInput, { target: { value: '2' } });
+
+    // Simulera formulärinlämning
+    const submitButton = screen.getByRole('button', { name: /strIIIIIike!/i });
+    fireEvent.click(submitButton);
+
+    // Kontrollera att formuläret kan skickas om valideringen passerar
+    expect(screen.getByText(/confirmation/i)).toBeInTheDocument();
+  });
+
+  // 6- Användare får inte skicka in om alla fält inte är ifyllda eller om spelarna överskrider maxkapaciteten per bana
+  test('should not allow submission if all fields are not filled or if players exceed max capacity per lane', () => {
+    render(
+      <MemoryRouter>
+        <Booking />
+      </MemoryRouter>
+    );
+
+    // Fyll i formuläret
+    fireEvent.change(screen.getByLabelText(/Date/i), {
+      target: { value: '2024-12-11' },
+    });
+    fireEvent.change(screen.getByLabelText(/Time/i), {
+      target: { value: '18:00' },
+    });
+    fireEvent.change(screen.getByLabelText(/Number of awesome bowlers/i), {
+      target: { value: 9 },
+    }); // Överskrider maxantal spelare
+    fireEvent.change(screen.getByLabelText(/Number of lanes/i), {
+      target: { value: 2 },
+    });
+
+    // Klicka på submit-knappen
+    fireEvent.click(screen.getByText(/strIIIIIike!/i));
+
+    // Kontrollera om felmeddelandet visas
+    screen.debug(); // Kontrollera nuvarande tillstånd i DOM
+    const errorMessage = document.querySelector('.error-message__text');
+    expect(errorMessage).toBeInTheDocument();
+  });
 });
-
-/////// Shoes
-/*
-import { render, screen, fireEvent, within } from "@testing-library/react"
-import "@testing-library/jest-dom"
-import Input from "../components/Input/Input"
-import Shoes from "../components/Shoes/Shoes"
-
-
-test("renders an input field with the correct label", () => {
-  render(
-    <Input
-      label="Shoe size / person 1"
-      type="text"
-      name="1"
-      handleChange={() => {}}
-    />
-  )
-
-  const input = screen.getByLabelText(/Shoe size \/ person 1/i)
-  expect(input).toBeInTheDocument()
-})
-
-
-test("allows user to input a shoe size", () => {
-  const mockHandleChange = vi.fn() // Skapa en mock-funktion för att spåra anrop
-  render(
-    <Input
-      label="Shoe size / person 1"
-      type="text"
-      name="1"
-      handleChange={mockHandleChange}
-    />
-  );
-
-  const input = screen.getByLabelText(/Shoe size \/ person 1/i)
-
-  fireEvent.change(input, { target: { value: "42" } })
-
-  expect(mockHandleChange).toHaveBeenCalled()
-  
-
-  const event = mockHandleChange.mock.calls[0][0]
-  expect(event.target.name).toBe("1")
-  expect(event.target.value).toBe("42")
-})
-
-
-test("renders the correct number of input fields for shoe sizes", () => {
-  const mockShoes = [
-    { id: "1", size: "" },
-    { id: "2", size: "" },
-    { id: "3", size: "" },
-  ]
-
-  render(
-    <Shoes
-      updateSize={() => {}}
-      addShoe={() => {}}
-      removeShoe={() => {}}
-      shoes={mockShoes}
-    />
-  )
-
-  const inputs = screen.getAllByLabelText(/Shoe size \/ person/i)
-  expect(inputs).toHaveLength(mockShoes.length)
-})
-
-
-test("allows user to input shoe sizes for multiple players", () => {
-  const mockUpdateSize = vi.fn(); // Skapa en mock-funktion för att spåra anrop
-  const mockShoes = [
-    { id: "1", size: "" },
-    { id: "2", size: "" },
-  ]
-
-  render(
-    <Shoes
-      updateSize={mockUpdateSize}
-      addShoe={() => {}}
-      removeShoe={() => {}}
-      shoes={mockShoes}
-    />
-  )
-
-
-  const inputs = screen.getAllByLabelText(/Shoe size \/ person/i)
-
-
-  fireEvent.change(inputs[0], { target: { value: "42" } })
-  fireEvent.change(inputs[1], { target: { value: "38" } })
-
-
-  expect(mockUpdateSize).toHaveBeenCalledTimes(2)
-
-
-  const firstCallEvent = mockUpdateSize.mock.calls[0][0]
-  expect(firstCallEvent.target.name).toBe("1")
-  expect(firstCallEvent.target.value).toBe("42")
-
-  const secondCallEvent = mockUpdateSize.mock.calls[1][0]
-  expect(secondCallEvent.target.name).toBe("2")
-  expect(secondCallEvent.target.value).toBe("38")
-})
-
-
-
-test("displays a summary of shoe sizes for all players", () => {
-  const mockShoes = [
-    { id: "1", size: "42" },
-    { id: "2", size: "38" },
-    { id: "3", size: "45" },
-  ]
-
-  render(
-    <Shoes
-      updateSize={() => {}}
-      addShoe={() => {}}
-      removeShoe={() => {}}
-      shoes={mockShoes}
-    />
-  )
-
-  const summarySection = screen.getByRole("region", { name: /shoe sizes summary/i });
-  const summaryList = within(summarySection).getByRole("list");
-  const items = within(summaryList).getAllByRole("listitem");
-
-
-  expect(items).toHaveLength(mockShoes.length)
-  mockShoes.forEach((shoe, index) => {
-    expect(within(items[index]).getByText(new RegExp(`Person ${index + 1}`, "i"))).toBeInTheDocument();
-    expect(within(items[index]).getByText(new RegExp(shoe.size, "i"))).toBeInTheDocument();
-  })
-})
-  */

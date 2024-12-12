@@ -6,6 +6,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    reporters: ['default', 'verbose'],
     transformMode: {
       web: [/\.jsx?$/], // transform JS/JSX  Ta bort?
     },

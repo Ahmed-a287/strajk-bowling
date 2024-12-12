@@ -10,7 +10,7 @@ function Input({
   disabled,
   maxLength,
 }) {
-  const id = `input-${name}`; //Creating a unique identifier for each input field as "input-when" "input-people" etc.
+  const id = `input-${name}`; //Skappar en uniq id för varje input t.ex. "input-when" "input-people" etc.
 
   return (
     <section className="input">
@@ -18,7 +18,7 @@ function Input({
         {label}
       </label>
       <input
-        id={id} //Set the genrated ID on the input
+        id={id} //Lägger den skapade id "namn" i input
         type={type}
         className={`input__field ${customClass ? customClass : ''}`}
         name={name}
