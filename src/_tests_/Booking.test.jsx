@@ -176,7 +176,7 @@ describe('Booking Tests', () => {
     );
     expect(errorMessage).toBeInTheDocument();
   });
-  //
+
   //Testar om användare kan lägga flera skor med storlek
   it('allows user to input shoe sizes for multiple players', () => {
     const mockUpdateSize = vi.fn(); // Skapa en mock-funktion för att spåra anrop
@@ -196,17 +196,17 @@ describe('Booking Tests', () => {
 
     const inputs = screen.getAllByLabelText(/Shoe size \/ person/i);
 
-    fireEvent.change(inputs[0], { target: { value: '42' } });
-    fireEvent.change(inputs[1], { target: { value: '38' } });
+    fireEvent.change(inputs[0], { target: { value: '39' } });
+    fireEvent.change(inputs[1], { target: { value: '40' } });
 
     expect(mockUpdateSize).toHaveBeenCalledTimes(2);
 
     const firstCallEvent = mockUpdateSize.mock.calls[0][0];
     expect(firstCallEvent.target.name).toBe('1');
-    expect(firstCallEvent.target.value).toBe('42');
+    expect(firstCallEvent.target.value).toBe('39');
 
     const secondCallEvent = mockUpdateSize.mock.calls[1][0];
     expect(secondCallEvent.target.name).toBe('2');
-    expect(secondCallEvent.target.value).toBe('38');
+    expect(secondCallEvent.target.value).toBe('40');
   });
 });
