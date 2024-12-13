@@ -5,6 +5,7 @@ on:
     branches:
       - 'main'
       - 'coverage'
+      - 'dev'
 
 jobs:
   build:
