@@ -2,7 +2,8 @@ name: CI Workfloe
 
 on:
   push:
-    branches: coverage
+    branches:
+      - 'main'
 
 jobs:
   test:
