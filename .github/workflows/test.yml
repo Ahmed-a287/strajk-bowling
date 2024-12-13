@@ -1,22 +1,29 @@
-name: 'Run tests and deploy'
+name: CI Workfloe
 
 on:
   push:
-    branches:
-      - 'main'
-      - 'coverage'
-      - 'dev'
+    branches: coverage
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Install modules
-        run: npm install
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: npm run coverage
+
       - name: Check coverage threshold
         run: |
           COVERAGE=$(npm run coverage | grep "All files" | awk '{print $5}' | tr -d '%')
@@ -27,10 +34,3 @@ jobs:
           else
             echo "Coverage check passed!"
           fi
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Simulate deployment
-        run: echo "Deploying to production... (Simulated)"
