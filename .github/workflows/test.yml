@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'coverage'
 
 jobs:
   build:
@@ -15,7 +16,16 @@ jobs:
         run: npm install
       - name: Run tests with coverage
         run: npm run test:coverage
-
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(npm run coverage | grep "All files" | awk '{print $5}' | tr -d '%')
+          echo "Current coverage is $COVERAGE%"
+          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+            echo "Coverage ($COVERAGE%) is below 90%"
+            exit 1
+          else
+            echo "Coverage check passed!"
+          fi
   deploy:
     needs: build
     runs-on: ubuntu-latest
