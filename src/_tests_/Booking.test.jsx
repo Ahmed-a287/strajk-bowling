@@ -1,7 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import '../setupTests';
-import Booking from '../views/Booking';
-import { vi, describe, expect, it } from 'vitest';
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import BookingInfo from '../components/BookingInfo/BookingInfo';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
