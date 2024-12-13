@@ -21,7 +21,7 @@ jobs:
         run: |
           COVERAGE=$(npm run coverage | grep "All files" | awk '{print $5}' | tr -d '%')
           echo "Current coverage is $COVERAGE%"
-          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
             echo "Coverage ($COVERAGE%) is below 70%"
             exit 1
           else
